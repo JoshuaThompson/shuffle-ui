@@ -30,7 +30,7 @@
       <div class="row">
         <div v-for="stream in streams" :id="stream.stream_id" class="col-md-3 stream">
           <iframe 
-            :src="'http://player.twitch.tv/?autoplay=false&channel=' + stream.channel.name"
+            :src="'https://player.twitch.tv/?autoplay=false&channel=' + stream.channel.name"
             width="400"
             height="300"
             frameborder="0" 
@@ -136,7 +136,7 @@ body {
 
 @import '~flexboxgrid/dist/flexboxgrid.css';
 @import '~keen-ui/dist/keen-ui.css';
-@import url(http://fonts.googleapis.com/css?family=Raleway:800|Open+Sans:400);
+@import url(https://fonts.googleapis.com/css?family=Raleway:800|Open+Sans:400);
 @import url(https://fonts.googleapis.com/icon?family=Material+Icons);
 
 h1 {
