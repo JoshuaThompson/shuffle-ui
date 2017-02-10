@@ -13,7 +13,7 @@
           <ui-textbox label="Maximum Viewers" type="number" placeholder="Streams with under Y viewers" v-model="maxViewers"></ui-textbox>
         </div>
         <div class="col-md-4 col-xs-12 filter">
-          <ui-select label="Languages" placeholder="Select languages to filter by" :options="languageOptions" v-model="selectedLanguages" multiple="true"></ui-select>
+          <ui-select label="Languages" placeholder="Select languages to filter by" :options="languageOptions" v-model="selectedLanguages" :multiple="languageSelectMultiple"></ui-select>
         </div>
         <div class="col-md-4 col-xs-12 filter">
           <ui-checkbox label="Hide Partnered Streams?" v-model="hidePartner"></ui-checkbox>
@@ -22,16 +22,35 @@
           <ui-checkbox label="Hide Mature Streams?" v-model="hideMature"></ui-checkbox>
         </div>
         <div class="col-md-4 col-xs-12 filter">
-          <ui-button type="primary" color="primary" buttonType="button" icon="shuffle">Re-Shuffle</ui-button>
+          <ui-button type="primary" color="primary" buttonType="button" icon="shuffle" v-on:click="shuffle">Re-Shuffle</ui-button>
         </div>
       </div>
     </section>
     <section id="streams">
+      <div class="row">
+        <div v-for="stream in streams" :id="stream.stream_id" class="col-md-3 stream">
+          <iframe 
+            :src="'http://player.twitch.tv/?autoplay=false&channel=' + stream.channel.name"
+            width="400"
+            height="300"
+            frameborder="0" 
+            scrolling="no"
+            allowfullscreen="true">
+          </iframe>
+        </div>
+      </div>
     </section>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
+const twitch_core = axios.create({
+  baseURL: 'http://localhost:3000',
+  timeout: 1000
+});
+
 export default {
   name: 'app',
   data() {
@@ -68,8 +87,30 @@ export default {
         { label: 'American Sign Language', value: 'asl' },
         { label: 'Other', value: 'other' }
       ],
-      hidePartners: false,
-      hideMature: true
+      languageSelectMultiple: true,
+      hidePartner: false,
+      hideMature: true,
+      streams: []
+    }
+  },
+  mounted() {
+    this.shuffle();
+  },
+  methods: {
+    shuffle() {
+      twitch_core.post('/random_streams', {
+                    languages: (this.$data.selectedLanguages.length > 0) ? this.$data.selectedLanguages.map((language) => { return language.value }) : null,
+                    hide_partner: this.$data.hidePartner,
+                    hide_mature: this.$data.hideMature,
+                    min_viewers: this.$data.minViewers,
+                    max_viewers: this.$data.maxViewers
+                  })
+                  .then((streams) => {
+                    this.$data.streams = streams.data;
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
     }
   }
 }
@@ -85,7 +126,8 @@ export default {
 
 html {
     font-size: 100%;
-    font-family: Roboto, Arial, Helvetica, sans-serif;
+    font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+    color: #242729;
 }
 
 body {
@@ -94,18 +136,18 @@ body {
 
 @import '~flexboxgrid/dist/flexboxgrid.css';
 @import '~keen-ui/dist/keen-ui.css';
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:800|Roboto:400);
+@import url(http://fonts.googleapis.com/css?family=Raleway:800|Open+Sans:400);
 @import url(https://fonts.googleapis.com/icon?family=Material+Icons);
 
 h1 {
-  font-family: Open Sans, Arial, Helvetica, sans-serif;
-  font-size: 2rem;
+  font-family: 'Raleway', Arial, Helvetica, sans-serif;
+  font-size: 4rem;
   font-weight: 800;
 }
 
 header {
   padding: 4rem;
-  background-color: #EEEEEE;
+  background-color: #6441A4;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -114,17 +156,20 @@ header {
   h1 {
     text-align: center;
     margin-bottom: 0;
-    color: #6441A4;
+    color: #FFFFFF;
   }
 
   p {
     font-size: 1.4rem;
     font-weight: 400;
+    color: #FFFFFF;
   }
 }
 
 #filters {
-  padding: 0rem 3rem;
+  margin: 0em 3em;
+  padding: 2em 0em;
+  border-bottom: 1px solid #242729;
 
   button {
     width: 100%;
@@ -132,6 +177,14 @@ header {
 
   .filter {
     margin-top: 3%;
+  }
+}
+
+#streams {
+  margin: 0em 3em;
+
+  .stream {
+    margin-top: 2em;
   }
 }
 
