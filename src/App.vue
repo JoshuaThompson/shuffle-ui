@@ -24,7 +24,7 @@
             <ui-checkbox label="Hide Mature Streams?" v-model="hideMature"></ui-checkbox>
           </div>
           <div class="col-xs-12 filter">
-            <ui-button type="primary" color="primary" buttonType="button" icon="shuffle" v-on:click="shuffle" :disabled="debounceShuffle">Shuffle</ui-button>
+            <ui-button type="primary" color="primary" buttonType="button" icon="shuffle" v-on:click="shuffle" :loading="debounceShuffle" :disabled="debounceShuffle">Shuffle</ui-button>
           </div>
         </div>
       </div>
@@ -39,8 +39,8 @@
             allowfullscreen="true">
           </iframe>
         </div>
-        <div v-if="stream === null">
-          <p>No Stream Found!</p>
+        <div v-if="stream === null && errorFindingStream" class="no-stream-message">
+          <h2>No stream matches your criteria.</h2>
         </div>
       </div>
     </section>
@@ -95,7 +95,8 @@ export default {
       hidePartner: false,
       hideMature: true,
       stream: null,
-      debounceShuffle: "true"
+      debounceShuffle: true,
+      errorFindingStream: false
     }
   },
   mounted() {
@@ -103,6 +104,8 @@ export default {
   },
   methods: {
     shuffle() {
+      this.$data.errorFindingStream = false;
+      this.$data.stream = null;
       this.$data.debounceShuffle = true;
       twitch_core.post('/random_stream', {
                     languages: (this.$data.selectedLanguages.length > 0) ? this.$data.selectedLanguages.map((language) => { return language.value }) : null,
@@ -112,7 +115,13 @@ export default {
                     max_viewers: this.$data.maxViewers
                   })
                   .then((stream) => {
-                    this.$data.stream = stream.data[0];
+
+                    if (stream.data[0] === undefined) {
+                      errorFindingStream = true;
+                    } else {
+                      this.$data.stream = stream.data[0];
+                    }
+                    
                     setTimeout(() => {
                       this.$data.debounceShuffle = false;
                     }, 500);
@@ -120,6 +129,7 @@ export default {
                   .catch((err) => {
                     console.log(err);
                     setTimeout(() => {
+                      this.$data.errorFindingStream = true;
                       this.$data.debounceShuffle = false;
                     }, 500);
                   });
@@ -222,6 +232,13 @@ header {
       width:100%;
       height:100%;
       border:0;
+    }
+
+    .no-stream-message {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
   }
 }
