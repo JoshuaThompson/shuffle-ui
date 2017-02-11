@@ -1,8 +1,8 @@
-# shuffle-ui
+# Shuffle-Ui
 
-> A Vue.js project
+This is the frontend component that should be paired with [shuffle-core](https://github.com/JoshuaThompson/shuffle-core) and the app that powers [Twitch Shuffle](http://twitchshuffle.com).
 
-## Build Setup
+## Installation
 
 ``` bash
 # install dependencies
@@ -15,4 +15,6 @@ npm run dev
 npm run build
 ```
 
-For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).
+## License
+
+MIT
