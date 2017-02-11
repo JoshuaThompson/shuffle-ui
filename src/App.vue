@@ -2,41 +2,45 @@
   <div id="app">
     <header>
       <h1>Twitch Shuffle</h1>
-      <p>Discover low-viewer streams</p>
+      <p>I'm feelin' lucky for Twitch.tv</p>
+      <p><a href="https://github.com/JoshuaThompson/shuffle-ui">Built by Joshua Thompson</a></p>
     </header>
-    <section id="filters">
-      <div class="row">
-        <div class="col-md-4 col-xs-12 filter">
-          <ui-textbox label="Minimum Viewers" type="number" placeholder="Streams with over X viewers" v-model="minViewers"></ui-textbox>
-        </div>
-        <div class="col-md-4 col-xs-12 filter">
-          <ui-textbox label="Maximum Viewers" type="number" placeholder="Streams with under Y viewers" v-model="maxViewers"></ui-textbox>
-        </div>
-        <div class="col-md-4 col-xs-12 filter">
-          <ui-select label="Languages" placeholder="Select languages to filter by" :options="languageOptions" v-model="selectedLanguages" :multiple="languageSelectMultiple"></ui-select>
-        </div>
-        <div class="col-md-4 col-xs-12 filter">
-          <ui-checkbox label="Hide Partnered Streams?" v-model="hidePartner"></ui-checkbox>
-        </div>
-        <div class="col-md-4 col-xs-12 filter">
-          <ui-checkbox label="Hide Mature Streams?" v-model="hideMature"></ui-checkbox>
-        </div>
-        <div class="col-md-4 col-xs-12 filter">
-          <ui-button type="primary" color="primary" buttonType="button" icon="shuffle" v-on:click="shuffle">Re-Shuffle</ui-button>
+    <section id="main-container" class="row">
+      <div id="filters" class="col-lg-4">
+        <div class="row">
+          <div class="col-xs-12 filter">
+            <ui-textbox label="Minimum Viewers" type="number" placeholder="Streams with over X viewers" v-model="minViewers"></ui-textbox>
+          </div>
+          <div class="col-xs-12 filter">
+            <ui-textbox label="Maximum Viewers" type="number" placeholder="Streams with under Y viewers" v-model="maxViewers"></ui-textbox>
+          </div>
+          <div class="col-xs-12 filter">
+            <ui-select label="Languages" placeholder="Select languages to filter by" :options="languageOptions" v-model="selectedLanguages" :multiple="languageSelectMultiple"></ui-select>
+          </div>
+          <div class="col-xs-12 filter">
+            <ui-checkbox label="Hide Partnered Streams?" v-model="hidePartner"></ui-checkbox>
+          </div>
+          <div class="col-xs-12 filter">
+            <ui-checkbox label="Hide Mature Streams?" v-model="hideMature"></ui-checkbox>
+          </div>
+          <div class="col-xs-12 filter">
+            <ui-button type="primary" color="primary" buttonType="button" icon="shuffle" v-on:click="shuffle">Re-Shuffle</ui-button>
+          </div>
         </div>
       </div>
-    </section>
-    <section id="streams">
-      <div class="row">
-        <div v-for="stream in streams" :id="stream.stream_id" class="col-md-3 stream">
+      <div id="streams" class="col-lg-8">
+        <div :id="stream.stream_id" class="stream" v-if="stream !== null">
           <iframe 
-            :src="'https://player.twitch.tv/?autoplay=false&channel=' + stream.channel.name"
+            :src="'https://player.twitch.tv/?autoplay=true&channel=' + stream.channel.name"
             width="400"
             height="300"
             frameborder="0" 
             scrolling="no"
             allowfullscreen="true">
           </iframe>
+        </div>
+        <div v-if="stream === null">
+          <p>No Stream Found!</p>
         </div>
       </div>
     </section>
@@ -90,7 +94,7 @@ export default {
       languageSelectMultiple: true,
       hidePartner: false,
       hideMature: true,
-      streams: []
+      stream: null
     }
   },
   mounted() {
@@ -98,15 +102,16 @@ export default {
   },
   methods: {
     shuffle() {
-      twitch_core.post('/random_streams', {
+      twitch_core.post('/random_stream', {
                     languages: (this.$data.selectedLanguages.length > 0) ? this.$data.selectedLanguages.map((language) => { return language.value }) : null,
                     hide_partner: this.$data.hidePartner,
                     hide_mature: this.$data.hideMature,
                     min_viewers: this.$data.minViewers,
                     max_viewers: this.$data.maxViewers
                   })
-                  .then((streams) => {
-                    this.$data.streams = streams.data;
+                  .then((stream) => {
+                    console.log(stream.data[0]);
+                    this.$data.stream = stream.data[0];
                   })
                   .catch((err) => {
                     console.log(err);
@@ -163,29 +168,50 @@ header {
     font-size: 1.4rem;
     font-weight: 400;
     color: #FFFFFF;
-    margin-top: 0;
+    margin: 0;
+  }
+
+  a {
+    font-size: .7rem;
+    color: #FFFFFF;
+    text-decoration: underline;
+  }
+
+  a:hover {
+    color: #FFFFFF;
   }
 }
 
-#filters {
-  margin: 0em 3em;
-  padding: 2em 0em;
-  border-bottom: 1px solid #242729;
+#main-container {
+  margin: 2%;
 
-  button {
-    width: 100%;
+  #filters {
+    padding: 2em 3em;
+
+    button {
+      width: 100%;
+    }
+
+    .filter {
+      margin-top: 3%;
+    }
   }
 
-  .filter {
-    margin-top: 3%;
-  }
-}
+  #streams {
+    .stream {
+      position:relative;
+      padding-bottom:56.25%;
+      height:0;
+    }
 
-#streams {
-  margin: 0em 3em;
-
-  .stream {
-    margin-top: 2em;
+    .stream iframe{
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      border:0;
+    }
   }
 }
 
