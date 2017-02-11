@@ -1,6 +1,6 @@
 # Shuffle-Ui
 
-This is the frontend component that should be paired with [shuffle-core](https://github.com/JoshuaThompson/shuffle-core) and the app that powers [Twitch Shuffle](http://twitchshuffle.com).
+The UI that for [Twitch Shuffle](http://twitchshuffle.com) which should be paired with the backend service [shuffle-core](https://github.com/JoshuaThompson/shuffle-core).
 
 ## Installation
 

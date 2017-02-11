@@ -59,9 +59,9 @@ export default {
   name: 'app',
   data() {
     return {
-      minViewers: 0,
-      maxViewers: 1000,
-      selectedLanguages: [],
+      minViewers: 50,
+      maxViewers: 750,
+      selectedLanguages: ["en"],
       languageOptions: [
         { label: 'English', value: 'en' },
         { label: 'Dansk', value: 'da' },
