@@ -61,7 +61,7 @@ export default {
     return {
       minViewers: 50,
       maxViewers: 750,
-      selectedLanguages: ["en"],
+      selectedLanguages: [{ label: 'English', value: 'en' }],
       languageOptions: [
         { label: 'English', value: 'en' },
         { label: 'Dansk', value: 'da' },
