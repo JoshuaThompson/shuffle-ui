@@ -3,10 +3,10 @@
     <header>
       <h1>Twitch Shuffle</h1>
       <p>I'm feelin' lucky for Twitch.tv</p>
-      <p><a href="https://github.com/JoshuaThompson/shuffle-ui">Built by Joshua Thompson</a></p>
+      <p class="credits">Built by <a href="https://github.com/JoshuaThompson/shuffle-ui" target="_blank">Joshua Thompson</a> using <a href="https://dev.twitch.tv/">Twitch.tv API</a></p>
     </header>
     <section id="main-container" class="row">
-      <div id="filters" class="col-lg-4">
+      <div id="filters" class="col-lg-4 col-xs-12">
         <div class="row">
           <div class="col-xs-12 filter">
             <ui-textbox label="Minimum Viewers" type="number" placeholder="Streams with over X viewers" v-model="minViewers"></ui-textbox>
@@ -24,11 +24,11 @@
             <ui-checkbox label="Hide Mature Streams?" v-model="hideMature"></ui-checkbox>
           </div>
           <div class="col-xs-12 filter">
-            <ui-button type="primary" color="primary" buttonType="button" icon="shuffle" v-on:click="shuffle">Re-Shuffle</ui-button>
+            <ui-button type="primary" color="primary" buttonType="button" icon="shuffle" v-on:click="shuffle" :disabled="debounceShuffle">Shuffle</ui-button>
           </div>
         </div>
       </div>
-      <div id="streams" class="col-lg-8">
+      <div id="streams" class="col-lg-8 col-xs-12">
         <div :id="stream.stream_id" class="stream" v-if="stream !== null">
           <iframe 
             :src="'https://player.twitch.tv/?autoplay=true&channel=' + stream.channel.name"
@@ -94,7 +94,8 @@ export default {
       languageSelectMultiple: true,
       hidePartner: false,
       hideMature: true,
-      stream: null
+      stream: null,
+      debounceShuffle: "true"
     }
   },
   mounted() {
@@ -102,6 +103,7 @@ export default {
   },
   methods: {
     shuffle() {
+      this.$data.debounceShuffle = true;
       twitch_core.post('/random_stream', {
                     languages: (this.$data.selectedLanguages.length > 0) ? this.$data.selectedLanguages.map((language) => { return language.value }) : null,
                     hide_partner: this.$data.hidePartner,
@@ -110,11 +112,16 @@ export default {
                     max_viewers: this.$data.maxViewers
                   })
                   .then((stream) => {
-                    console.log(stream.data[0]);
                     this.$data.stream = stream.data[0];
+                    setTimeout(() => {
+                      this.$data.debounceShuffle = false;
+                    }, 500);
                   })
                   .catch((err) => {
                     console.log(err);
+                    setTimeout(() => {
+                      this.$data.debounceShuffle = false;
+                    }, 500);
                   });
     }
   }
@@ -151,7 +158,7 @@ h1 {
 }
 
 header {
-  padding: 4rem;
+  padding: 3rem;
   background-color: #6441A4;
   display: flex;
   flex-direction: column;
@@ -160,7 +167,7 @@ header {
 
   h1 {
     text-align: center;
-    margin-bottom: 0;
+    margin: 0;
     color: #FFFFFF;
   }
 
@@ -171,14 +178,18 @@ header {
     margin: 0;
   }
 
-  a {
+  p.credits {
     font-size: .7rem;
     color: #FFFFFF;
-    text-decoration: underline;
-  }
 
-  a:hover {
-    color: #FFFFFF;
+    a {
+      color: #FFFFFF;
+      text-decoration: underline;
+    }
+
+    a:hover {
+      color: #FFFFFF;
+    }
   }
 }
 
@@ -214,5 +225,49 @@ header {
     }
   }
 }
+
+/* Overwriting styles until keen-ui has easier color editing  */
+.ui-button--type-primary.ui-button--color-primary {
+  background-color: #6441A4;
+}
+
+.ui-button--type-primary.ui-button--color-primary:hover:not(.is-disabled), .ui-button--type-primary.ui-button--color-primary.has-dropdown-open, .ui-button--type-primary.ui-button--color-primary.has-focus-ring:focus, body[modality="keyboard"] .ui-button--type-primary.ui-button--color-primary:focus {
+  background-color: #6441A4;
+}
+
+.ui-checkbox--color-primary.is-checked .ui-checkbox__checkmark::before {
+  background-color: #6441A4;
+  border-color: #6441A4;
+}
+
+.ui-checkbox--color-primary:not(.is-disabled).is-checked:hover .ui-checkbox__checkmark::before, .ui-checkbox--color-primary:not(.is-disabled).is-checked.is-active .ui-checkbox__checkmark::before {
+  background-color: #6441A4;
+  border-color: #6441A4;
+}
+
+.ui-textbox.is-active:not(.is-disabled) .ui-textbox__label-text, .ui-textbox.is-active:not(.is-disabled) .ui-textbox__icon-wrapper .ui-icon {
+  color: #6441A4;
+}
+
+.ui-textbox.is-active:not(.is-disabled) .ui-textbox__input, .ui-textbox.is-active:not(.is-disabled) .ui-textbox__textarea {
+  border-bottom: 2px solid #6441A4;
+}
+
+.ui-select.is-active:not(.is-disabled) .ui-select__label-text, .ui-select.is-active:not(.is-disabled) .ui-select__icon-wrapper .ui-icon {
+  color: #6441A4;
+}
+
+.ui-select.is-active:not(.is-disabled) .ui-select__display {
+  border-bottom: 2px solid #6441A4;
+}
+
+.ui-select-option.is-selected {
+  color: #6441A4;
+}
+
+.ui-select-option.is-selected .ui-select-option__checkbox {
+  color:#6441A4;
+}
+
 
 </style>
