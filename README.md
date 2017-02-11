@@ -1,6 +1,6 @@
 # Shuffle-Ui
 
-The UI that for [Twitch Shuffle](http://twitchshuffle.com) which should be paired with the backend service [shuffle-core](https://github.com/JoshuaThompson/shuffle-core).
+The UI for [Twitch Shuffle](http://twitchshuffle.com) which should be paired with the backend service [shuffle-core](https://github.com/JoshuaThompson/shuffle-core).
 
 ## Installation
 
