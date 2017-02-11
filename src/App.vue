@@ -48,7 +48,7 @@ import axios from 'axios';
 
 const twitch_core = axios.create({
   baseURL: process.env.API_HOST,
-  timeout: 1000
+  timeout: 10000
 });
 
 export default {
@@ -163,6 +163,7 @@ header {
     font-size: 1.4rem;
     font-weight: 400;
     color: #FFFFFF;
+    margin-top: 0;
   }
 }
 
