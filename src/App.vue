@@ -111,8 +111,8 @@ export default {
       this.$data.debounceShuffle = true;
       twitch_core.post('/random_stream', {
                     languages: (this.$data.selectedLanguages.length > 0) ? this.$data.selectedLanguages.map((language) => { return language.value }) : null,
-                    hide_partner: this.$data.hidePartner,
-                    hide_mature: this.$data.hideMature,
+                    hide_partner: (this.$data.hidePartner) ? this.$data.hidePartner : null,
+                    hide_mature: (this.$data.hideMature) ? this.$data.hideMature : null,
                     min_viewers: this.$data.minViewers,
                     max_viewers: this.$data.maxViewers
                   })
