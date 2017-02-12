@@ -39,6 +39,9 @@
             allowfullscreen="true">
           </iframe>
         </div>
+        <div v-if="stream === null && !errorFindingStream" class="no-stream-message">
+          <h2>Searching for a stream...</h2>
+        </div>
         <div v-if="stream === null && errorFindingStream" class="no-stream-message">
           <h2>No stream matches your criteria.</h2>
         </div>
@@ -52,7 +55,7 @@ import axios from 'axios';
 
 const twitch_core = axios.create({
   baseURL: process.env.API_HOST,
-  timeout: 10000
+  timeout: 30000
 });
 
 export default {
@@ -240,6 +243,8 @@ header {
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      padding-bottom:56.25%;
+      height:0;
     }
   }
 }
