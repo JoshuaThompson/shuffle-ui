@@ -105,7 +105,6 @@ export default {
   methods: {
     shuffle() {
       this.$data.errorFindingStream = false;
-      this.$data.stream = null;
       this.$data.debounceShuffle = true;
       twitch_core.post('/random_stream', {
                     languages: (this.$data.selectedLanguages.length > 0) ? this.$data.selectedLanguages.map((language) => { return language.value }) : null,
@@ -117,6 +116,7 @@ export default {
                   .then((stream) => {
 
                     if (stream.data[0] === undefined) {
+                      this.$data.stream = null;
                       errorFindingStream = true;
                     } else {
                       this.$data.stream = stream.data[0];
@@ -129,6 +129,7 @@ export default {
                   .catch((err) => {
                     console.log(err);
                     setTimeout(() => {
+                      this.$data.stream = null;
                       this.$data.errorFindingStream = true;
                       this.$data.debounceShuffle = false;
                     }, 500);
