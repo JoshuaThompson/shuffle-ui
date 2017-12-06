@@ -2,8 +2,8 @@
   <div id="app">
     <header>
       <h1>Twitch Shuffle</h1>
-      <p>I'm feelin' lucky for Twitch.tv</p>
-      <p class="credits">Built by <a href="https://github.com/JoshuaThompson/shuffle-ui" target="_blank">Joshua Thompson</a> using <a href="https://dev.twitch.tv/">Twitch.tv API</a></p>
+      <p>Find a random stream!</p>
+      <p class="credits">Built using <a href="https://dev.twitch.tv/">Twitch.tv API</a></p>
     </header>
     <section id="main-container" class="row">
       <div id="filters" class="col-lg-4 col-xs-12">
