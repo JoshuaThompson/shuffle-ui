@@ -1,1 +1,1 @@
-Old defunct UI, merged into [one project](https://github.com/joshuathompson/shuffle-core)
+Old defunct UI, merged into [one project](https://github.com/joshuathompson/shuffle)
